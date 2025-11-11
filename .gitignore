@@ -1,0 +1,17 @@
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+.terraform/
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terragrunt-cache/
+.idea/
+.vscode/
+*.iml
+.DS_Store
+*.log
+.terraformrc
+.terragrunt.hcl
