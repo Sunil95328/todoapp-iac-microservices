@@ -1,0 +1,65 @@
+name: todoapp-infra-pipeline
+run-name : Deploy by @${{ github.actor }}
+permissions:
+  contents: read
+  id-token: write
+on:
+  push:
+    branches:
+      - main
+      - feature/dev
+jobs:
+  terraform:
+    name: 'Terraform init and plan'
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.6
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./environments/dev
+
+      - name: Terraform plan
+        run: terraform plan
+        working-directory: ./environments/dev
+ 
+    security-scan:
+      name: 'Security Scan with tfsec'
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+
+        - name: Setup tfsec
+          uses: aquasecurity/tfsec-action@v1
+          with:
+            version: '1.30.2'
+
+        - name: Run tfsec scan
+          run: tfsec .
+          working-directory: ./environments/dev
+
+    deploy:
+      name: 'Terraform Apply'
+      runs-on: self-hosted
+      needs: [terraform, security-scan]
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+
+        - name: Setup Terraform
+          uses: hashicorp/setup-terraform@v2
+          with:
+            terraform_version: 1.5.6
+
+        - name: Terraform Apply
+          run: terraform apply -auto-approve
+          working-directory: ./environments/dev
+
