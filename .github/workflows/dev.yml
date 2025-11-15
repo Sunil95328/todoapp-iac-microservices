@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2.0.3
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.6
 
@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Azure Login
-        uses: Azure/login@v2.3.0
+        uses: azure/login@v2
         with:
           client-id: 6aa372f4-3288-4271-b002-48c74717e3ad
           tenant-id: 76078fa6-40ac-4f47-af43-9db5e0ff6002
@@ -67,14 +67,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup tfsec
-        uses: aquasecurity/tfsec-action@v1
-        with:
-          version: '1.30.2'
-
       - name: Run tfsec scan
-        run: tfsec .
-        working-directory: ./environment/dev
+        uses: aquasecurity/tfsec-action@v2
+        with:
+          working_directory: ./environment/dev
 
 
   deploy:
