@@ -12,6 +12,21 @@ on:
       - feature/dev
 
 jobs:
+  azlogin:
+    name: 'Azure Login'
+    runs-on: self-hosted
+    needs: terraform-init-plan
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: 6aa372f4-3288-4271-b002-48c74717e3ad
+          tenant-id: 76078fa6-40ac-4f47-af43-9db5e0ff6002
+          subscription-id: 5c916523-d8df-42a5-9cb9-71dbddbac301
+          
   terraform-init-plan:
     name: 'Terraform init and plan'
     runs-on: self-hosted
@@ -41,22 +56,6 @@ jobs:
         run: terraform plan -no-color -input=false
         continue-on-error: true
         working-directory: ./Environment/Dev
-
-
-  azlogin:
-    name: 'Azure Login'
-    runs-on: self-hosted
-    needs: terraform-init-plan
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: 6aa372f4-3288-4271-b002-48c74717e3ad
-          tenant-id: 76078fa6-40ac-4f47-af43-9db5e0ff6002
-          subscription-id: 5c916523-d8df-42a5-9cb9-71dbddbac301
 
 
   security-scan:
