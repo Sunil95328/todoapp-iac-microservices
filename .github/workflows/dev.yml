@@ -61,7 +61,7 @@ jobs:
 
   security-scan:
     name: 'Security Scan with tfsec'
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: azlogin
     steps:
       - name: Checkout repository
