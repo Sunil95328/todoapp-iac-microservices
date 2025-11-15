@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v2.0.3
         with:
           terraform_version: 1.5.6
 
@@ -30,22 +30,41 @@ jobs:
           uses: actions/checkout@v3
 
         - name: Azure Login
-          uses: azure/login@v1
+          uses: Azure/login@v2.3.0
           with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
+            client-id: 6aa372f4-3288-4271-b002-48c74717e3ad
+            tenant-id: 76078fa6-40ac-4f47-af43-9db5e0ff6002
+            subscription-id: 5c916523-d8df-42a5-9cb9-71dbddbac301
 
 
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./environments/dev
 
-      - name: Terraform plan
-        run: terraform plan
-        working-directory: ./environments/dev
+
+
+        - name: Terraform fmt
+          id: fmt
+          run: terraform fmt -check
+          continue-on-error: true
+          working-directory: ./environments/dev
+        
+        - name: Terraform Init
+          id: init
+          run: terraform init -input=false
+          working-directory: ./environments/dev
+        
+        - name: Terraform Validate
+          id: validate
+          run: terraform validate -no-color
+          working-directory: ./environments/dev
+        
+        - name: Terraform Plan
+          id: plan
+          run: terraform plan -no-color -input=false
+          continue-on-error: true
+          working-directory: ./environments/dev
  
     security-scan:
       name: 'Security Scan with tfsec'
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
       steps:
         - name: Checkout repository
           uses: actions/checkout@v3
@@ -62,18 +81,20 @@ jobs:
     deploy:
       name: 'Terraform Apply'
       runs-on: self-hosted
-      needs: [terraform, security-scan]
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      needs: [terraform-init-plan, security-scan]
+      if: github.ref == 'refs/heads/main'
+      environment: dev
       steps:
         - name: Checkout repository
           uses: actions/checkout@v3
 
-        - name: Setup Terraform
-          uses: hashicorp/setup-terraform@v2
-          with:
-            terraform_version: 1.5.6
+        - name: Terraform Init
+          id: init
+          run: terraform init -input=false
+          working-directory: ./environments/dev
 
         - name: Terraform Apply
+          id : apply
           run: terraform apply -auto-approve
           working-directory: ./environments/dev
 
