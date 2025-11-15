@@ -27,20 +27,20 @@ jobs:
       - name: Terraform fmt
         run: terraform fmt -check
         continue-on-error: true
-        working-directory: ./environment/dev
+        working-directory: ./Environment/Dev
 
       - name: Terraform Init
         run: terraform init -input=false
-        working-directory: ./environment/dev
+        working-directory: ./Environment/Dev
 
       - name: Terraform Validate
         run: terraform validate -no-color
-        working-directory: ./environment/dev
+        working-directory: ./Environment/Dev
 
       - name: Terraform Plan
         run: terraform plan -no-color -input=false
         continue-on-error: true
-        working-directory: ./environment/dev
+        working-directory: ./Environment/Dev
 
 
   azlogin:
@@ -70,7 +70,7 @@ jobs:
       - name: Run tfsec scan
         uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
         with:
-          working_directory: ./environment/dev
+          working_directory: ./Environment/Dev
 
 
   deploy:
@@ -85,8 +85,8 @@ jobs:
 
       - name: Terraform Init
         run: terraform init -input=false
-        working-directory: ./environment/dev
+        working-directory: ./Environment/Dev
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: ./environment/dev
+        working-directory: ./Environment/Dev
