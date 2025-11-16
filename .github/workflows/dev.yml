@@ -24,6 +24,10 @@ jobs:
         with:
           terraform_version: 1.5.6
 
+      - name: Clear existing Azure CLI sessions
+        run: |
+          az account clear || true
+
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -71,6 +75,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Clear existing Azure CLI sessions
+        run: |
+          az account clear || true
 
       - name: Azure Login
         uses: azure/login@v2
