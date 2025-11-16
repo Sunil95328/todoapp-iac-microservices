@@ -68,7 +68,6 @@ jobs:
     runs-on: self-hosted
     needs: terraform-init-plan
     if: github.ref == 'refs/heads/main'
-    environment: dev
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
