@@ -2,7 +2,8 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "1.5.6"
+      version = "4.41.0"
+
     }
   }
   backend "azurerm" {
@@ -16,7 +17,6 @@ terraform {
 provider "azurerm" {
   features {}
   subscription_id = "5c916523-d8df-42a5-9cb9-71dbddbac301"
-  use_oidc = true
 }
 
 
